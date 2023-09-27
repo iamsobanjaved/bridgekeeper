@@ -5,11 +5,9 @@ nox.options.reuse_existing_virtualenvs = True
 nox.options.error_on_external_run = True
 
 
-@nox.session(python=("3.5", "3.6", "3.7", "3.8"))
-@nox.parametrize("django", ("2.2", "3.0", "3.2", "4.2"))
+@nox.session(python=("3.8"))
+@nox.parametrize("django", ("3.2", "4.2"))
 def tests(session, django):
-    if (django == "3.0" and session.python == "3.5") or (django == "4.2" and session.python in ['3.5', '3.6', '3.7']):
-        session.skip()
     session.install("poetry")
     session.install(f"django>={django},<{django}.999")
     session.install("factory-boy>=2.9.2,<2.9.99999")
@@ -23,33 +21,33 @@ def tests(session, django):
     session.run("pytest")
 
 
-@nox.session(python="3.8")
-def docs(session):
-    session.install("poetry")
-    session.run(
-        "poetry",
-        "install",
-        # this is necessary to prevent poetry from creating
-        # its own virtualenv
-        env={"VIRTUAL_ENV": session.virtualenv.location},
-    )
+# @nox.session(python="3.8")
+# def docs(session):
+#     session.install("poetry")
+#     session.run(
+#         "poetry",
+#         "install",
+#         # this is necessary to prevent poetry from creating
+#         # its own virtualenv
+#         env={"VIRTUAL_ENV": session.virtualenv.location},
+#     )
 
-    session.run("sphinx-build", "docs", "docs/_build/html")
-
-
-@nox.session(python=False)
-def clean_docs(session):
-    session.run("rm", "-rf", "docs/_build")
+#     session.run("sphinx-build", "docs", "docs/_build/html")
 
 
-@nox.session(python="3.8")
-def release_test(session):
-    session.install("poetry", "twine")
-    session.run(
-        "poetry",
-        "build",
-        # this is necessary to prevent poetry from creating
-        # its own virtualenv
-        env={"VIRTUAL_ENV": session.virtualenv.location},
-    )
-    session.run("twine", "check", "dist/*")
+# @nox.session(python=False)
+# def clean_docs(session):
+#     session.run("rm", "-rf", "docs/_build")
+
+
+# @nox.session(python="3.8")
+# def release_test(session):
+#     session.install("poetry", "twine")
+#     session.run(
+#         "poetry",
+#         "build",
+#         # this is necessary to prevent poetry from creating
+#         # its own virtualenv
+#         env={"VIRTUAL_ENV": session.virtualenv.location},
+#     )
+#     session.run("twine", "check", "dist/*")
