@@ -6,9 +6,9 @@ nox.options.error_on_external_run = True
 
 
 @nox.session(python=("3.5", "3.6", "3.7", "3.8"))
-@nox.parametrize("django", ("2.2", "3.0"))
+@nox.parametrize("django", ("2.2", "3.0", "3.2", "4.2"))
 def tests(session, django):
-    if django == "3.0" and session.python == "3.5":
+    if (django == "3.0" and session.python == "3.5") or (django == "4.2" and session.python in ['3.5', '3.6', '3.7']):
         session.skip()
     session.install("poetry")
     session.install(f"django>={django},<{django}.999")
